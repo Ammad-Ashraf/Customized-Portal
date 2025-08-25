@@ -1,0 +1,183 @@
+{
+  "id": "2a493465-daa3-4530-9a03-b16598caf64e",
+  "name": "QR-Based Restaurant Management System API",
+  "description": "API for browsing menu items and placing orders in a QR-based restaurant system.",
+  "order": [],
+  "folders": [
+    {
+      "id": "5d47db50-fa03-4b1c-8196-2b80764de190",
+      "name": "Menu",
+      "description": "Endpoints for browsing menu items",
+      "order": [
+        "6547d389-4913-48c8-b966-c0560519e88f"
+      ],
+      "collection_id": "2a493465-daa3-4530-9a03-b16598caf64e"
+    },
+    {
+      "id": "084add10-0a2e-41bf-96d1-e63b8adfaace",
+      "name": "Order",
+      "description": "Endpoints for creating and viewing orders",
+      "order": [
+        "2118d86a-45fe-4545-b24a-a430acd32a56",
+        "ecb075d0-d83b-4805-86c2-e644ff93eda4"
+      ],
+      "collection_id": "2a493465-daa3-4530-9a03-b16598caf64e"
+    }
+  ],
+  "requests": [
+    {
+      "folder": "5d47db50-fa03-4b1c-8196-2b80764de190",
+      "id": "6547d389-4913-48c8-b966-c0560519e88f",
+      "name": "listMenuItems",
+      "dataDisabled": false,
+      "descriptionFormat": "markdown",
+      "description": "Returns the full list of menu items currently available for ordering.",
+      "headers": "Accept:application/json\n",
+      "method": "GET",
+      "pathVariables": {},
+      "url": "https://restaurant-api-i70b.onrender.com/api/menu",
+      "responses": [
+        {
+          "request": "6547d389-4913-48c8-b966-c0560519e88f",
+          "id": "7eb18efb-cc92-4081-905b-5499f2b3355d",
+          "name": "Response_200",
+          "status": "List of menu items",
+          "responseCode": {
+            "code": 200,
+            "name": "200",
+            "detail": "List of menu items"
+          },
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "mime": "application/json",
+          "text": "{\n  \"success\": true,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"_id\": \"66cfe9b1f23a4a0012ab0001\",\n      \"name\": \"Margherita Pizza\",\n      \"description\": \"Classic pizza with tomato sauce, mozzarella, and basil\",\n      \"price\": 1199.0,\n      \"category\": \"Pizza\",\n      \"image\": \"https://cdn.example.com/img/margherita.jpg\",\n      \"isAvailable\": true\n    },\n    {\n      \"_id\": \"66cfe9b1f23a4a0012ab0002\",\n      \"name\": \"Chicken Biryani\",\n      \"description\": \"Spiced rice with marinated chicken\",\n      \"price\": 899.0,\n      \"category\": \"Main\",\n      \"image\": \"https://cdn.example.com/img/biryani.jpg\",\n      \"isAvailable\": true\n    }\n  ]\n}",
+          "language": "Text",
+          "rawDataType": "text"
+        }
+      ],
+      "collectionId": "2a493465-daa3-4530-9a03-b16598caf64e",
+      "queryParams": [],
+      "headerData": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "pathVariableData": []
+    },
+    {
+      "folder": "084add10-0a2e-41bf-96d1-e63b8adfaace",
+      "id": "2118d86a-45fe-4545-b24a-a430acd32a56",
+      "name": "placeOrder",
+      "dataMode": "raw",
+      "dataDisabled": false,
+      "descriptionFormat": "markdown",
+      "description": "Creates an order for the specified items and table.",
+      "headers": "Content-Type:application/json\nAccept:application/json\n",
+      "method": "POST",
+      "currentHelper": "",
+      "auth": {
+        "type": "noauth"
+      },
+      "pathVariables": {},
+      "url": "https://restaurant-api-i70b.onrender.com/api/order/place-order",
+      "responses": [
+        {
+          "request": "2118d86a-45fe-4545-b24a-a430acd32a56",
+          "id": "c4ba44bc-404d-48bb-9aea-dccf11ea3fe0",
+          "name": "Response_201",
+          "status": "Order placed successfully",
+          "responseCode": {
+            "code": 201,
+            "name": "201",
+            "detail": "Order placed successfully"
+          },
+          "headers": [
+            {
+              "name": "Location",
+              "key": "Location",
+              "value": "https://restaurant-api-i70b.onrender.com/api/order/66cff0aa3a2d4a0012cdbeef",
+              "description": "URL of the created order resource"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "mime": "application/json",
+          "text": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"66cff0aa3a2d4a0012cdbeef\",\n    \"items\": [\n      {\n        \"menuItem\": \"66cfe9b1f23a4a0012ab0001\",\n        \"quantity\": 2\n      },\n      {\n        \"menuItem\": \"66cfe9b1f23a4a0012ab0002\",\n        \"quantity\": 1\n      }\n    ],\n    \"tableNumber\": 7,\n    \"totalAmount\": 3297.0,\n    \"orderType\": \"dine-in\",\n    \"customerDetails\": {\n      \"contact\": \"+92-300-1234567\",\n      \"address\": \"Table 7 - Hall A\"\n    },\n    \"status\": \"pending\",\n    \"createdAt\": \"2025-08-25T10:00:00Z\"\n  }\n}",
+          "language": "Text",
+          "rawDataType": "text"
+        }
+      ],
+      "rawModeData": "{\"items\":[{\"menuItem\":\"66cfe9b1f23a4a0012ab0001\",\"quantity\":2},{\"menuItem\":\"66cfe9b1f23a4a0012ab0002\",\"quantity\":1}],\"tableNumber\":7,\"totalAmount\":3297.0,\"orderType\":\"dine-in\",\"customerDetails\":{\"contact\":\"+92-300-1234567\",\"address\":\"Table 7 - Hall A\"}}",
+      "collectionId": "2a493465-daa3-4530-9a03-b16598caf64e",
+      "queryParams": [],
+      "headerData": [
+        {
+          "key": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        },
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "pathVariableData": []
+    },
+    {
+      "folder": "084add10-0a2e-41bf-96d1-e63b8adfaace",
+      "id": "ecb075d0-d83b-4805-86c2-e644ff93eda4",
+      "name": "getOrderHistory",
+      "dataDisabled": false,
+      "descriptionFormat": "markdown",
+      "description": "Returns the authenticated user's recent orders.",
+      "headers": "Accept:application/json\n",
+      "method": "GET",
+      "currentHelper": "",
+      "auth": {
+        "type": "noauth"
+      },
+      "pathVariables": {},
+      "url": "https://restaurant-api-i70b.onrender.com/api/order/history",
+      "responses": [
+        {
+          "request": "ecb075d0-d83b-4805-86c2-e644ff93eda4",
+          "id": "f5c37a42-d68c-4772-ba69-53c07be6efc0",
+          "name": "Response_200",
+          "status": "List of previous orders",
+          "responseCode": {
+            "code": 200,
+            "name": "200",
+            "detail": "List of previous orders"
+          },
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "mime": "application/json",
+          "text": "{\n  \"success\": true,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"_id\": \"66cff0aa3a2d4a0012cdbeef\",\n      \"items\": [\n        {\n          \"menuItem\": \"66cfe9b1f23a4a0012ab0001\",\n          \"quantity\": 2\n        }\n      ],\n      \"tableNumber\": 7,\n      \"totalAmount\": 2398.0,\n      \"orderType\": \"dine-in\",\n      \"customerDetails\": {\n        \"contact\": \"+92-300-1234567\",\n        \"address\": \"Table 7 - Hall A\"\n      },\n      \"status\": \"served\",\n      \"createdAt\": \"2025-08-20T14:35:00Z\"\n    }\n  ]\n}",
+          "language": "Text",
+          "rawDataType": "text"
+        }
+      ],
+      "collectionId": "2a493465-daa3-4530-9a03-b16598caf64e",
+      "queryParams": [],
+      "headerData": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "pathVariableData": []
+    }
+  ],
+  "variables": []
+}

@@ -1,0 +1,509 @@
+#%RAML 1.0
+title: QR-Based Restaurant Management System API
+version: 1.0.1
+baseUri: https://restaurant-api-i70b.onrender.com/api
+baseUriParameters: {}
+protocols:
+- HTTPS
+documentation:
+- title: QR-Based Restaurant Management System API
+  content: API for browsing menu items and placing orders in a QR-based restaurant system.
+securitySchemes: {}
+securedBy: []
+types:
+  MenuItem:
+    displayName: MenuItem
+    description: A single menu item available for ordering.
+    type: object
+    properties:
+      _id:
+        required: true
+        example:
+          value: 66cfe9b1f23a4a0012ab0001
+        displayName: _id
+        description: Unique identifier of the menu item
+        type: string
+      name:
+        required: true
+        example:
+          value: Margherita Pizza
+        displayName: name
+        description: Display name of the item
+        type: string
+      description:
+        required: false
+        example:
+          value: Classic pizza with tomato sauce, mozzarella, and basil
+        displayName: description
+        description: Short description of the item
+        type: string
+      price:
+        required: true
+        example:
+          value: 1199
+        displayName: price
+        description: Price in minor currency or standard units, depending on system
+        type: number
+        format: double
+      category:
+        required: false
+        example:
+          value: Pizza
+        displayName: category
+        description: Category or section
+        type: string
+      image:
+        required: false
+        example:
+          value: https://cdn.example.com/img/margherita.jpg
+        displayName: image
+        description: Image URL
+        type: string
+      isAvailable:
+        required: true
+        default: 'true'
+        example:
+          value: true
+        displayName: isAvailable
+        description: Whether the item is currently available
+        type: boolean
+  MenuResponse:
+    displayName: MenuResponse
+    description: Response containing a list of menu items.
+    type: object
+    properties:
+      success:
+        required: true
+        default: 'true'
+        example:
+          value: true
+        displayName: success
+        description: Indicates if the request was successful
+        type: boolean
+      count:
+        required: false
+        example:
+          value: 2
+        displayName: count
+        description: Number of items returned
+        type: integer
+        format: int32
+      data:
+        required: true
+        displayName: data
+        description: Menu items
+        type: array
+        items:
+          type: MenuItem
+  OrderItem:
+    displayName: OrderItem
+    description: An individual line item within an order.
+    type: object
+    properties:
+      menuItem:
+        required: true
+        example:
+          value: 66cfe9b1f23a4a0012ab0001
+        displayName: menuItem
+        description: Menu item ID
+        type: string
+      quantity:
+        required: true
+        default: '1'
+        example:
+          value: 2
+        displayName: quantity
+        description: Quantity ordered
+        type: integer
+        minimum: 1
+        format: int32
+  CustomerDetails:
+    displayName: CustomerDetails
+    description: Minimal customer contact and delivery info.
+    type: object
+    properties:
+      contact:
+        required: true
+        example:
+          value: +92-300-1234567
+        displayName: contact
+        description: Customer contact number or identifier
+        type: string
+      address:
+        required: true
+        example:
+          value: Table 7 - Hall A
+        displayName: address
+        description: Delivery address or table location note
+        type: string
+  OrderInput:
+    displayName: OrderInput
+    description: Payload used to create a new order.
+    type: object
+    properties:
+      items:
+        required: true
+        displayName: items
+        description: List of items being ordered
+        type: array
+        items:
+          type: OrderItem
+      tableNumber:
+        required: true
+        example:
+          value: 7
+        displayName: tableNumber
+        description: Table number for dine-in orders
+        type: integer
+        minimum: 1
+        format: int32
+      totalAmount:
+        required: true
+        example:
+          value: 3297
+        displayName: totalAmount
+        description: Total amount for the order
+        type: number
+        minimum: 0
+        format: double
+      orderType:
+        required: true
+        example:
+          value: dine-in
+        displayName: orderType
+        description: How the order will be fulfilled.
+        type: string
+        enum:
+        - dine-in
+        - takeaway
+        - delivery
+      customerDetails:
+        required: true
+        displayName: customerDetails
+        description: Minimal customer contact and delivery info.
+        type: CustomerDetails
+  Order:
+    displayName: Order
+    description: An order placed by a customer.
+    type: object
+    properties:
+      _id:
+        required: true
+        example:
+          value: 66cff0aa3a2d4a0012cdbeef
+        displayName: _id
+        description: Order ID
+        type: string
+      items:
+        required: true
+        displayName: items
+        description: List of ordered items
+        type: array
+        items:
+          type: OrderItem
+      tableNumber:
+        required: false
+        example:
+          value: 7
+        displayName: tableNumber
+        description: Table number for dine-in
+        type: integer
+        format: int32
+      totalAmount:
+        required: true
+        example:
+          value: 3297
+        displayName: totalAmount
+        description: Total amount charged
+        type: number
+        format: double
+      orderType:
+        required: true
+        example:
+          value: dine-in
+        displayName: orderType
+        description: How the order will be fulfilled.
+        type: string
+        enum:
+        - dine-in
+        - takeaway
+        - delivery
+      customerDetails:
+        required: false
+        displayName: customerDetails
+        description: Minimal customer contact and delivery info.
+        type: CustomerDetails
+      status:
+        required: true
+        default: pending
+        example:
+          value: pending
+        displayName: status
+        description: Current order status
+        type: string
+      createdAt:
+        required: true
+        example:
+          value: 2025-08-25T10:00:00Z
+        displayName: createdAt
+        description: Creation timestamp (ISO 8601)
+        type: datetime
+  OrderResponse:
+    displayName: OrderResponse
+    description: Response containing a single order.
+    type: object
+    properties:
+      success:
+        required: true
+        default: 'true'
+        example:
+          value: true
+        displayName: success
+        description: Indicates if the request was successful
+        type: boolean
+      data:
+        required: true
+        displayName: data
+        description: An order placed by a customer.
+        type: Order
+  OrderHistoryResponse:
+    displayName: OrderHistoryResponse
+    description: Response containing a list of orders.
+    type: object
+    properties:
+      success:
+        required: true
+        default: 'true'
+        example:
+          value: true
+        displayName: success
+        description: Indicates if the request was successful
+        type: boolean
+      count:
+        required: false
+        example:
+          value: 1
+        displayName: count
+        description: Number of orders returned
+        type: integer
+        format: int32
+      data:
+        required: true
+        displayName: data
+        description: Orders
+        type: array
+        items:
+          type: Order
+  ErrorResponse:
+    displayName: ErrorResponse
+    description: Standard error payload.
+    type: object
+    properties:
+      success:
+        required: true
+        default: 'false'
+        example:
+          value: false
+        displayName: success
+        description: Always false for errors
+        type: boolean
+      error:
+        required: true
+        example:
+          value: Invalid token
+        displayName: error
+        description: Human-readable error message
+        type: string
+/menu:
+  get:
+    displayName: listMenuItems
+    description: Returns the full list of menu items currently available for ordering.
+    responses:
+      '200':
+        description: List of menu items
+        body:
+          application/json:
+            example:
+              value:
+                success: true
+                count: 2
+                data:
+                - _id: 66cfe9b1f23a4a0012ab0001
+                  name: Margherita Pizza
+                  description: Classic pizza with tomato sauce, mozzarella, and basil
+                  price: 1199
+                  category: Pizza
+                  image: https://cdn.example.com/img/margherita.jpg
+                  isAvailable: true
+                - _id: 66cfe9b1f23a4a0012ab0002
+                  name: Chicken Biryani
+                  description: Spiced rice with marinated chicken
+                  price: 899
+                  category: Main
+                  image: https://cdn.example.com/img/biryani.jpg
+                  isAvailable: true
+            displayName: response200
+            description: Response containing a list of menu items.
+            type: MenuResponse
+      '500':
+        description: Server error
+        body:
+          application/json:
+            example:
+              value:
+                success: false
+                error: Unexpected error
+            displayName: response500
+            description: Standard error payload.
+            type: ErrorResponse
+/order:
+  /place-order:
+    post:
+      displayName: placeOrder
+      description: Creates an order for the specified items and table.
+      body:
+        application/json:
+          example:
+            value:
+              items:
+              - menuItem: 66cfe9b1f23a4a0012ab0001
+                quantity: 2
+              - menuItem: 66cfe9b1f23a4a0012ab0002
+                quantity: 1
+              tableNumber: 7
+              totalAmount: 3297
+              orderType: dine-in
+              customerDetails:
+                contact: +92-300-1234567
+                address: Table 7 - Hall A
+          displayName: body
+          description: Order payload including items, table number, and customer details.
+          type: OrderInput
+      securedBy:
+      - bearerAuth
+      headers:
+        Content-Type:
+          required: true
+          displayName: Content-Type
+          type: string
+          enum:
+          - application/json
+      responses:
+        '201':
+          description: Order placed successfully
+          headers:
+            Location:
+              example:
+                value: https://restaurant-api-i70b.onrender.com/api/order/66cff0aa3a2d4a0012cdbeef
+              displayName: Location
+              description: URL of the created order resource
+              type: string
+          body:
+            application/json:
+              example:
+                value:
+                  success: true
+                  data:
+                    _id: 66cff0aa3a2d4a0012cdbeef
+                    items:
+                    - menuItem: 66cfe9b1f23a4a0012ab0001
+                      quantity: 2
+                    - menuItem: 66cfe9b1f23a4a0012ab0002
+                      quantity: 1
+                    tableNumber: 7
+                    totalAmount: 3297
+                    orderType: dine-in
+                    customerDetails:
+                      contact: +92-300-1234567
+                      address: Table 7 - Hall A
+                    status: pending
+                    createdAt: 2025-08-25T10:00:00Z
+              displayName: response201
+              description: Response containing a single order.
+              type: OrderResponse
+        '400':
+          description: Invalid request
+          body:
+            application/json:
+              example:
+                value:
+                  success: false
+                  error: items must not be empty
+              displayName: response400
+              description: Standard error payload.
+              type: ErrorResponse
+        '401':
+          description: Unauthorized
+          body:
+            application/json:
+              example:
+                value:
+                  success: false
+                  error: Missing or invalid token
+              displayName: response401
+              description: Standard error payload.
+              type: ErrorResponse
+        '500':
+          description: Server error
+          body:
+            application/json:
+              example:
+                value:
+                  success: false
+                  error: Unexpected error
+              displayName: response500
+              description: Standard error payload.
+              type: ErrorResponse
+  /history:
+    get:
+      displayName: getOrderHistory
+      description: Returns the authenticated user's recent orders.
+      securedBy:
+      - bearerAuth
+      responses:
+        '200':
+          description: List of previous orders
+          body:
+            application/json:
+              example:
+                value:
+                  success: true
+                  count: 1
+                  data:
+                  - _id: 66cff0aa3a2d4a0012cdbeef
+                    items:
+                    - menuItem: 66cfe9b1f23a4a0012ab0001
+                      quantity: 2
+                    tableNumber: 7
+                    totalAmount: 2398
+                    orderType: dine-in
+                    customerDetails:
+                      contact: +92-300-1234567
+                      address: Table 7 - Hall A
+                    status: served
+                    createdAt: 2025-08-20T14:35:00Z
+              displayName: response200
+              description: Response containing a list of orders.
+              type: OrderHistoryResponse
+        '401':
+          description: Unauthorized
+          body:
+            application/json:
+              example:
+                value:
+                  success: false
+                  error: Missing or invalid token
+              displayName: response401
+              description: Standard error payload.
+              type: ErrorResponse
+        '500':
+          description: Server error
+          body:
+            application/json:
+              example:
+                value:
+                  success: false
+                  error: Unexpected error
+              displayName: response500
+              description: Standard error payload.
+              type: ErrorResponse

@@ -1,0 +1,254 @@
+{
+  "info": {
+    "name": "QR-Based Restaurant Management System API",
+    "_postman_id": "2f838757-62bc-4708-ab65-186adb9a9599",
+    "description": "API for browsing menu items and placing orders in a QR-based restaurant system.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Menu",
+      "description": "Endpoints for browsing menu items",
+      "item": [
+        {
+          "id": "82186b1e-8129-405d-b342-aaf6397a3901",
+          "name": "listMenuItems",
+          "request": {
+            "url": {
+              "protocol": "https",
+              "host": "restaurant-api-i70b.onrender.com",
+              "path": [
+                "api",
+                "menu"
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "disabled": false
+            },
+            "description": "Returns the full list of menu items currently available for ordering."
+          },
+          "response": [
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"_id\": \"66cfe9b1f23a4a0012ab0001\",\n      \"name\": \"Margherita Pizza\",\n      \"description\": \"Classic pizza with tomato sauce, mozzarella, and basil\",\n      \"price\": 1199.0,\n      \"category\": \"Pizza\",\n      \"image\": \"https://cdn.example.com/img/margherita.jpg\",\n      \"isAvailable\": true\n    },\n    {\n      \"_id\": \"66cfe9b1f23a4a0012ab0002\",\n      \"name\": \"Chicken Biryani\",\n      \"description\": \"Spiced rice with marinated chicken\",\n      \"price\": 899.0,\n      \"category\": \"Main\",\n      \"image\": \"https://cdn.example.com/img/biryani.jpg\",\n      \"isAvailable\": true\n    }\n  ]\n}",
+              "status": "List of menu items",
+              "code": 200,
+              "name": "Response_200",
+              "id": "4eba8b19-b58f-43df-9e9b-08e1b51e5ade"
+            },
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"Unexpected error\"\n}",
+              "status": "Server error",
+              "code": 500,
+              "name": "Response_500",
+              "id": "7b877cb7-4ab0-4156-8a30-f2d97e1b4166"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "description": "Endpoints for creating and viewing orders",
+      "item": [
+        {
+          "id": "b571b23e-31ba-4fdd-b990-f3d840873425",
+          "name": "placeOrder",
+          "request": {
+            "url": {
+              "protocol": "https",
+              "host": "restaurant-api-i70b.onrender.com",
+              "path": [
+                "api",
+                "order/place-order"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"items\":[{\"menuItem\":\"66cfe9b1f23a4a0012ab0001\",\"quantity\":2},{\"menuItem\":\"66cfe9b1f23a4a0012ab0002\",\"quantity\":1}],\"tableNumber\":7,\"totalAmount\":3297.0,\"orderType\":\"dine-in\",\"customerDetails\":{\"contact\":\"+92-300-1234567\",\"address\":\"Table 7 - Hall A\"}}",
+              "disabled": false
+            },
+            "description": "Creates an order for the specified items and table."
+          },
+          "response": [
+            {
+              "header": [
+                {
+                  "key": "Location",
+                  "value": "",
+                  "disabled": false
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"_id\": \"66cff0aa3a2d4a0012cdbeef\",\n    \"items\": [\n      {\n        \"menuItem\": \"66cfe9b1f23a4a0012ab0001\",\n        \"quantity\": 2\n      },\n      {\n        \"menuItem\": \"66cfe9b1f23a4a0012ab0002\",\n        \"quantity\": 1\n      }\n    ],\n    \"tableNumber\": 7,\n    \"totalAmount\": 3297.0,\n    \"orderType\": \"dine-in\",\n    \"customerDetails\": {\n      \"contact\": \"+92-300-1234567\",\n      \"address\": \"Table 7 - Hall A\"\n    },\n    \"status\": \"pending\",\n    \"createdAt\": \"2025-08-25T10:00:00Z\"\n  }\n}",
+              "status": "Order placed successfully",
+              "code": 201,
+              "name": "Response_201",
+              "id": "9b9a2830-a92c-4671-9c82-ae7b5051707a"
+            },
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"items must not be empty\"\n}",
+              "status": "Invalid request",
+              "code": 400,
+              "name": "Response_400",
+              "id": "fb4a038d-d893-4de6-9368-878914f2e258"
+            },
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"Missing or invalid token\"\n}",
+              "status": "Unauthorized",
+              "code": 401,
+              "name": "Response_401",
+              "id": "b3834e3f-af05-4d13-adb7-65e48de6410b"
+            },
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"Unexpected error\"\n}",
+              "status": "Server error",
+              "code": 500,
+              "name": "Response_500",
+              "id": "1dff2620-3d73-4a79-bba0-82025b8bc7ca"
+            }
+          ]
+        },
+        {
+          "id": "df7fb961-0396-492f-ab73-37751c559763",
+          "name": "getOrderHistory",
+          "request": {
+            "url": {
+              "protocol": "https",
+              "host": "restaurant-api-i70b.onrender.com",
+              "path": [
+                "api",
+                "order/history"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "disabled": false
+            },
+            "description": "Returns the authenticated user's recent orders."
+          },
+          "response": [
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"_id\": \"66cff0aa3a2d4a0012cdbeef\",\n      \"items\": [\n        {\n          \"menuItem\": \"66cfe9b1f23a4a0012ab0001\",\n          \"quantity\": 2\n        }\n      ],\n      \"tableNumber\": 7,\n      \"totalAmount\": 2398.0,\n      \"orderType\": \"dine-in\",\n      \"customerDetails\": {\n        \"contact\": \"+92-300-1234567\",\n        \"address\": \"Table 7 - Hall A\"\n      },\n      \"status\": \"served\",\n      \"createdAt\": \"2025-08-20T14:35:00Z\"\n    }\n  ]\n}",
+              "status": "List of previous orders",
+              "code": 200,
+              "name": "Response_200",
+              "id": "0249c064-db32-4695-a9c1-63c86cb5e32a"
+            },
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"Missing or invalid token\"\n}",
+              "status": "Unauthorized",
+              "code": 401,
+              "name": "Response_401",
+              "id": "af219589-085e-4d91-a9e5-98d9a2047c2f"
+            },
+            {
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "disabled": false
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"Unexpected error\"\n}",
+              "status": "Server error",
+              "code": 500,
+              "name": "Response_500",
+              "id": "732ead69-bb4d-4d50-a01d-f6c1c5daac65"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": []
+}

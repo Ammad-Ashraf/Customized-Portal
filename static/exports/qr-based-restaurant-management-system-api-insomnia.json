@@ -1,0 +1,67 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_source": "apimatic.transformer",
+  "resources": [
+    {
+      "name": "QR-Based Restaurant Management System API",
+      "_type": "workspace",
+      "_id": "wrk_ab601af7d2014ccb8b8fb00c43f11bf2",
+      "description": "API for browsing menu items and placing orders in a QR-based restaurant system."
+    },
+    {
+      "name": "Menu",
+      "_type": "request_group",
+      "_id": "fld_8618444b2b424197bca2bdddddf724d4",
+      "parentId": "wrk_ab601af7d2014ccb8b8fb00c43f11bf2",
+      "description": "Endpoints for browsing menu items"
+    },
+    {
+      "name": "Order",
+      "_type": "request_group",
+      "_id": "fld_82dde403f80f4df890c5370e0deb31ae",
+      "parentId": "wrk_ab601af7d2014ccb8b8fb00c43f11bf2",
+      "description": "Endpoints for creating and viewing orders"
+    },
+    {
+      "name": "listMenuItems",
+      "method": "GET",
+      "url": "https://restaurant-api-i70b.onrender.com/api/menu",
+      "_type": "request",
+      "_id": "req_268bddbd556742c5a873af57ca329742",
+      "parentId": "fld_8618444b2b424197bca2bdddddf724d4",
+      "description": "Returns the full list of menu items currently available for ordering."
+    },
+    {
+      "name": "placeOrder",
+      "method": "POST",
+      "url": "https://restaurant-api-i70b.onrender.com/api/order/place-order",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"items\":[{\"menuItem\":\"66cfe9b1f23a4a0012ab0001\",\"quantity\":2},{\"menuItem\":\"66cfe9b1f23a4a0012ab0002\",\"quantity\":1}],\"tableNumber\":7,\"totalAmount\":3297.0,\"orderType\":\"dine-in\",\"customerDetails\":{\"contact\":\"+92-300-1234567\",\"address\":\"Table 7 - Hall A\"}}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "_type": "request",
+      "_id": "req_47e65ce7e0554f2284989cc304a9e341",
+      "parentId": "fld_82dde403f80f4df890c5370e0deb31ae",
+      "description": "Creates an order for the specified items and table."
+    },
+    {
+      "name": "getOrderHistory",
+      "method": "GET",
+      "url": "https://restaurant-api-i70b.onrender.com/api/order/history",
+      "authentication": {},
+      "_type": "request",
+      "_id": "req_ebf135c25deb4c15b96e5e3fdf529681",
+      "parentId": "fld_82dde403f80f4df890c5370e0deb31ae",
+      "description": "Returns the authenticated user's recent orders."
+    }
+  ]
+}

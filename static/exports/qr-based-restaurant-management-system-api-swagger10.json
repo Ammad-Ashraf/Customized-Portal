@@ -1,0 +1,452 @@
+{
+  "swaggerVersion": "1.2",
+  "basePath": "https://restaurant-api-i70b.onrender.com/api",
+  "resourcePath": "/",
+  "apis": [
+    {
+      "path": "/menu",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Returns the full list of menu items currently available for ordering.",
+          "nickname": "listMenuItems",
+          "parameters": [],
+          "produces": [
+            "application/json"
+          ],
+          "responseMessages": [
+            {
+              "code": 500,
+              "responseModel": "ErrorResponse",
+              "message": "Server error"
+            }
+          ],
+          "uniqueItems": false,
+          "$ref": "MenuResponse"
+        }
+      ]
+    },
+    {
+      "path": "/order/place-order",
+      "operations": [
+        {
+          "method": "POST",
+          "summary": "Creates an order for the specified items and table.",
+          "nickname": "placeOrder",
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "description": "",
+              "paramType": "header",
+              "required": true,
+              "allowMultiple": false,
+              "defaultValue": "application/json",
+              "uniqueItems": false,
+              "type": "string"
+            },
+            {
+              "name": "body",
+              "description": "Order payload including items, table number, and customer details.",
+              "paramType": "body",
+              "required": true,
+              "allowMultiple": false,
+              "uniqueItems": false,
+              "type": "OrderInput"
+            }
+          ],
+          "authorizations": {
+            "bearerAuth": []
+          },
+          "produces": [
+            "application/json"
+          ],
+          "consumes": [
+            "application/json"
+          ],
+          "responseMessages": [
+            {
+              "code": 400,
+              "responseModel": "ErrorResponse",
+              "message": "Invalid request"
+            },
+            {
+              "code": 401,
+              "responseModel": "ErrorResponse",
+              "message": "Unauthorized"
+            },
+            {
+              "code": 500,
+              "responseModel": "ErrorResponse",
+              "message": "Server error"
+            }
+          ],
+          "uniqueItems": false,
+          "$ref": "OrderResponse"
+        }
+      ]
+    },
+    {
+      "path": "/order/history",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Returns the authenticated user's recent orders.",
+          "nickname": "getOrderHistory",
+          "parameters": [],
+          "authorizations": {
+            "bearerAuth": []
+          },
+          "produces": [
+            "application/json"
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "responseModel": "ErrorResponse",
+              "message": "Unauthorized"
+            },
+            {
+              "code": 500,
+              "responseModel": "ErrorResponse",
+              "message": "Server error"
+            }
+          ],
+          "uniqueItems": false,
+          "$ref": "OrderHistoryResponse"
+        }
+      ]
+    }
+  ],
+  "models": {
+    "MenuItem": {
+      "id": "MenuItem",
+      "description": "A single menu item available for ordering.",
+      "required": [
+        "_id",
+        "name",
+        "price",
+        "isAvailable"
+      ],
+      "properties": {
+        "_id": {
+          "description": "Unique identifier of the menu item",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name of the item",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "description": {
+          "description": "Short description of the item",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "price": {
+          "description": "Price in minor currency or standard units, depending on system",
+          "minimum": "",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "number",
+          "format": "double"
+        },
+        "category": {
+          "description": "Category or section",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "image": {
+          "description": "Image URL",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "isAvailable": {
+          "description": "Whether the item is currently available",
+          "defaultValue": "true",
+          "uniqueItems": false,
+          "type": "boolean"
+        }
+      }
+    },
+    "MenuResponse": {
+      "id": "MenuResponse",
+      "description": "Response containing a list of menu items.",
+      "required": [
+        "success",
+        "data"
+      ],
+      "properties": {
+        "success": {
+          "description": "Indicates if the request was successful",
+          "defaultValue": "true",
+          "uniqueItems": false,
+          "type": "boolean"
+        },
+        "count": {
+          "description": "Number of items returned",
+          "minimum": "",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "description": "Menu items",
+          "items": {
+            "$ref": "MenuItem"
+          },
+          "uniqueItems": false,
+          "type": "array"
+        }
+      }
+    },
+    "OrderItem": {
+      "id": "OrderItem",
+      "description": "An individual line item within an order.",
+      "required": [
+        "menuItem",
+        "quantity"
+      ],
+      "properties": {
+        "menuItem": {
+          "description": "Menu item ID",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "quantity": {
+          "description": "Quantity ordered",
+          "defaultValue": "1",
+          "minimum": "1",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "CustomerDetails": {
+      "id": "CustomerDetails",
+      "description": "Minimal customer contact and delivery info.",
+      "required": [
+        "contact",
+        "address"
+      ],
+      "properties": {
+        "contact": {
+          "description": "Customer contact number or identifier",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "address": {
+          "description": "Delivery address or table location note",
+          "uniqueItems": false,
+          "type": "string"
+        }
+      }
+    },
+    "OrderInput": {
+      "id": "OrderInput",
+      "description": "Payload used to create a new order.",
+      "required": [
+        "items",
+        "tableNumber",
+        "totalAmount",
+        "orderType",
+        "customerDetails"
+      ],
+      "properties": {
+        "items": {
+          "description": "List of items being ordered",
+          "items": {
+            "$ref": "OrderItem"
+          },
+          "uniqueItems": false,
+          "type": "array"
+        },
+        "tableNumber": {
+          "description": "Table number for dine-in orders",
+          "minimum": "1",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalAmount": {
+          "description": "Total amount for the order",
+          "minimum": "0",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "number",
+          "format": "double"
+        },
+        "orderType": {
+          "description": "How the order will be fulfilled.",
+          "enum": [
+            "dine-in",
+            "takeaway",
+            "delivery"
+          ],
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "customerDetails": {
+          "description": "Minimal customer contact and delivery info.",
+          "uniqueItems": false,
+          "$ref": "CustomerDetails"
+        }
+      }
+    },
+    "Order": {
+      "id": "Order",
+      "description": "An order placed by a customer.",
+      "required": [
+        "_id",
+        "items",
+        "totalAmount",
+        "orderType",
+        "status",
+        "createdAt"
+      ],
+      "properties": {
+        "_id": {
+          "description": "Order ID",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "items": {
+          "description": "List of ordered items",
+          "items": {
+            "$ref": "OrderItem"
+          },
+          "uniqueItems": false,
+          "type": "array"
+        },
+        "tableNumber": {
+          "description": "Table number for dine-in",
+          "minimum": "",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalAmount": {
+          "description": "Total amount charged",
+          "minimum": "",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "number",
+          "format": "double"
+        },
+        "orderType": {
+          "description": "How the order will be fulfilled.",
+          "enum": [
+            "dine-in",
+            "takeaway",
+            "delivery"
+          ],
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "customerDetails": {
+          "description": "Minimal customer contact and delivery info.",
+          "uniqueItems": false,
+          "$ref": "CustomerDetails"
+        },
+        "status": {
+          "description": "Current order status",
+          "defaultValue": "pending",
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "Creation timestamp (ISO 8601)",
+          "uniqueItems": false,
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "OrderResponse": {
+      "id": "OrderResponse",
+      "description": "Response containing a single order.",
+      "required": [
+        "success",
+        "data"
+      ],
+      "properties": {
+        "success": {
+          "description": "Indicates if the request was successful",
+          "defaultValue": "true",
+          "uniqueItems": false,
+          "type": "boolean"
+        },
+        "data": {
+          "description": "An order placed by a customer.",
+          "uniqueItems": false,
+          "$ref": "Order"
+        }
+      }
+    },
+    "OrderHistoryResponse": {
+      "id": "OrderHistoryResponse",
+      "description": "Response containing a list of orders.",
+      "required": [
+        "success",
+        "data"
+      ],
+      "properties": {
+        "success": {
+          "description": "Indicates if the request was successful",
+          "defaultValue": "true",
+          "uniqueItems": false,
+          "type": "boolean"
+        },
+        "count": {
+          "description": "Number of orders returned",
+          "minimum": "",
+          "maximum": "",
+          "uniqueItems": false,
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "description": "Orders",
+          "items": {
+            "$ref": "Order"
+          },
+          "uniqueItems": false,
+          "type": "array"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "id": "ErrorResponse",
+      "description": "Standard error payload.",
+      "required": [
+        "success",
+        "error"
+      ],
+      "properties": {
+        "success": {
+          "description": "Always false for errors",
+          "defaultValue": "false",
+          "uniqueItems": false,
+          "type": "boolean"
+        },
+        "error": {
+          "description": "Human-readable error message",
+          "uniqueItems": false,
+          "type": "string"
+        }
+      }
+    }
+  },
+  "authorizations": {},
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ]
+}

@@ -1,0 +1,273 @@
+FORMAT: 1A
+HOST: https://restaurant-api-i70b.onrender.com/api
+
+# QR-Based Restaurant Management System API
+API for browsing menu items and placing orders in a QR-based restaurant system.
+
+## Authentication
+This API uses JSON Web Tokens for its authentication.
+
+The parameters that are needed to be sent for this type of authentication are as follows:
++ `JWTHeaderName`
++ `JWTAcquireURL`
++ `JWTDestroyURL`
+
+# Group Menu
+
+Endpoints for browsing menu items
+
+## Menu [/menu]
+
+### listMenuItems [GET]
+Returns the full list of menu items currently available for ordering.
+
++ Response 200 (application/json)
+
+        List of menu items
+
+    + Attributes (MenuResponse)
+
+
+    + Body
+
+            {"success":true,"count":2,"data":[{"_id":"66cfe9b1f23a4a0012ab0001","name":"Margherita Pizza","description":"Classic pizza with tomato sauce, mozzarella, and basil","price":1199.0,"category":"Pizza","image":"https://cdn.example.com/img/margherita.jpg","isAvailable":true},{"_id":"66cfe9b1f23a4a0012ab0002","name":"Chicken Biryani","description":"Spiced rice with marinated chicken","price":899.0,"category":"Main","image":"https://cdn.example.com/img/biryani.jpg","isAvailable":true}]}
+
+
++ Response 500 (application/json)
+
+        Server error
+
+    + Attributes (ErrorResponse)
+
+
+    + Body
+
+            {"success":false,"error":"Unexpected error"}
+
+
+
+
+# Group Order
+
+Endpoints for creating and viewing orders
+
+## Order Place Order [/order/place-order]
+
+### placeOrder [POST]
+Creates an order for the specified items and table.
+
++ Request (<<Add Header Value>>)
+
+    + Attributes (OrderInput)
+
+
+    + Body
+
+            {
+                "items": [
+                    {
+                        "menuItem": "66cfe9b1f23a4a0012ab0001",
+                        "quantity": 2
+                    },
+                    {
+                        "menuItem": "66cfe9b1f23a4a0012ab0002",
+                        "quantity": 1
+                    }
+                ],
+                "tableNumber": 7,
+                "totalAmount": 3297.0,
+                "orderType": "dine-in",
+                "customerDetails": {
+                    "contact": "+92-300-1234567",
+                    "address": "Table 7 - Hall A"
+                }
+            }
+
+
++ Response 201 (application/json)
+
+        Order placed successfully
+
+    + Attributes (OrderResponse)
+
+
+    + Body
+
+            {"success":true,"data":{"_id":"66cff0aa3a2d4a0012cdbeef","items":[{"menuItem":"66cfe9b1f23a4a0012ab0001","quantity":2},{"menuItem":"66cfe9b1f23a4a0012ab0002","quantity":1}],"tableNumber":7,"totalAmount":3297.0,"orderType":"dine-in","customerDetails":{"contact":"+92-300-1234567","address":"Table 7 - Hall A"},"status":"pending","createdAt":"2025-08-25T10:00:00Z"}}
+
+
++ Response 400 (application/json)
+
+        Invalid request
+
+    + Attributes (ErrorResponse)
+
+
+    + Body
+
+            {"success":false,"error":"items must not be empty"}
+
+
++ Response 401 (application/json)
+
+        Unauthorized
+
+    + Attributes (ErrorResponse)
+
+
+    + Body
+
+            {"success":false,"error":"Missing or invalid token"}
+
+
++ Response 500 (application/json)
+
+        Server error
+
+    + Attributes (ErrorResponse)
+
+
+    + Body
+
+            {"success":false,"error":"Unexpected error"}
+
+
+
+## Order History [/order/history]
+
+### getOrderHistory [GET]
+Returns the authenticated user's recent orders.
+
++ Response 200 (application/json)
+
+        List of previous orders
+
+    + Attributes (OrderHistoryResponse)
+
+
+    + Body
+
+            {"success":true,"count":1,"data":[{"_id":"66cff0aa3a2d4a0012cdbeef","items":[{"menuItem":"66cfe9b1f23a4a0012ab0001","quantity":2}],"tableNumber":7,"totalAmount":2398.0,"orderType":"dine-in","customerDetails":{"contact":"+92-300-1234567","address":"Table 7 - Hall A"},"status":"served","createdAt":"2025-08-20T14:35:00Z"}]}
+
+
++ Response 401 (application/json)
+
+        Unauthorized
+
+    + Attributes (ErrorResponse)
+
+
+    + Body
+
+            {"success":false,"error":"Missing or invalid token"}
+
+
++ Response 500 (application/json)
+
+        Server error
+
+    + Attributes (ErrorResponse)
+
+
+    + Body
+
+            {"success":false,"error":"Unexpected error"}
+
+
+
+
+# Data Structures
+
+## MenuItem (object)
+A single menu item available for ordering.
+
+### Properties
++ `_id`: `66cfe9b1f23a4a0012ab0001` (string, required) - Unique identifier of the menu item
++ `name`: `Margherita Pizza` (string, required) - Display name of the item
++ `description`: `Classic pizza with tomato sauce, mozzarella, and basil` (string, optional) - Short description of the item
++ `price`: `1199` (number, required) - Price in minor currency or standard units, depending on system
++ `category`: `Pizza` (string, optional) - Category or section
++ `image`: `https://cdn.example.com/img/margherita.jpg` (string, optional) - Image URL
++ `isAvailable`: `true` (boolean, required) - Whether the item is currently available
+
+
+## MenuResponse (object)
+Response containing a list of menu items.
+
+### Properties
++ `success`: `true` (boolean, required) - Indicates if the request was successful
++ `count`: `2` (number, optional) - Number of items returned
++ `data` (array[MenuItem], required) - Menu items
+
+
+## OrderItem (object)
+An individual line item within an order.
+
+### Properties
++ `menuItem`: `66cfe9b1f23a4a0012ab0001` (string, required) - Menu item ID
++ `quantity`: `2` (number, required) - Quantity ordered
+
+
+## CustomerDetails (object)
+Minimal customer contact and delivery info.
+
+### Properties
++ `contact`: `+92-300-1234567` (string, required) - Customer contact number or identifier
++ `address`: `Table 7 - Hall A` (string, required) - Delivery address or table location note
+
+
+## OrderInput (object)
+Payload used to create a new order.
+
+### Properties
++ `items` (array[OrderItem], required) - List of items being ordered
++ `tableNumber`: `7` (number, required) - Table number for dine-in orders
++ `totalAmount`: `3297` (number, required) - Total amount for the order
++ `orderType` (enum[string], required) - How the order will be fulfilled.
+    + `dine-in`
+    + `takeaway`
+    + `delivery`
++ `customerDetails` (CustomerDetails, required) - Minimal customer contact and delivery info.
+
+
+## Order (object)
+An order placed by a customer.
+
+### Properties
++ `_id`: `66cff0aa3a2d4a0012cdbeef` (string, required) - Order ID
++ `items` (array[OrderItem], required) - List of ordered items
++ `tableNumber`: `7` (number, optional) - Table number for dine-in
++ `totalAmount`: `3297` (number, required) - Total amount charged
++ `orderType` (enum[string], required) - How the order will be fulfilled.
+    + `dine-in`
+    + `takeaway`
+    + `delivery`
++ `customerDetails` (CustomerDetails, optional) - Minimal customer contact and delivery info.
++ `status`: `pending` (string, required) - Current order status
++ `createdAt`: `2025-08-25T10:00:00Z` (string, required) - Creation timestamp (ISO 8601)
+
+
+## OrderResponse (object)
+Response containing a single order.
+
+### Properties
++ `success`: `true` (boolean, required) - Indicates if the request was successful
++ `data` (Order, required) - An order placed by a customer.
+
+
+## OrderHistoryResponse (object)
+Response containing a list of orders.
+
+### Properties
++ `success`: `true` (boolean, required) - Indicates if the request was successful
++ `count`: `1` (number, optional) - Number of orders returned
++ `data` (array[Order], required) - Orders
+
+
+## ErrorResponse (object)
+Standard error payload.
+
+### Properties
++ `success`: `false` (boolean, required) - Always false for errors
++ `error`: `Invalid token` (string, required) - Human-readable error message
+

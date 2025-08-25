@@ -1,0 +1,608 @@
+openapi: 3.1.0
+info:
+  title: QR-Based Restaurant Management System API
+  description: API for browsing menu items and placing orders in a QR-based restaurant system.
+  contact:
+    name: API Support
+    url: https://restaurant-api.example.com/support
+    email: support@example.com
+  version: '1.0.1'
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+servers:
+- url: https://restaurant-api-i70b.onrender.com/api
+  description: Production API server
+  variables: {}
+paths:
+  /menu:
+    get:
+      tags:
+      - Menu
+      summary: listMenuItems
+      description: Returns the full list of menu items currently available for ordering.
+      operationId: listMenuItems
+      parameters: []
+      responses:
+        '200':
+          description: List of menu items
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/MenuResponse'
+                - description: Response containing a list of menu items.
+                  examples:
+                  - success: true
+                    count: 2
+                    data:
+                    - _id: 66cfe9b1f23a4a0012ab0001
+                      name: Margherita Pizza
+                      description: Classic pizza with tomato sauce, mozzarella, and basil
+                      price: 1199
+                      category: Pizza
+                      image: https://cdn.example.com/img/margherita.jpg
+                      isAvailable: true
+                    - _id: 66cfe9b1f23a4a0012ab0002
+                      name: Chicken Biryani
+                      description: Spiced rice with marinated chicken
+                      price: 899
+                      category: Main
+                      image: https://cdn.example.com/img/biryani.jpg
+                      isAvailable: true
+                contentMediaType: application/json
+              example:
+                success: true
+                count: 2
+                data:
+                - _id: 66cfe9b1f23a4a0012ab0001
+                  name: Margherita Pizza
+                  description: Classic pizza with tomato sauce, mozzarella, and basil
+                  price: 1199
+                  category: Pizza
+                  image: https://cdn.example.com/img/margherita.jpg
+                  isAvailable: true
+                - _id: 66cfe9b1f23a4a0012ab0002
+                  name: Chicken Biryani
+                  description: Spiced rice with marinated chicken
+                  price: 899
+                  category: Main
+                  image: https://cdn.example.com/img/biryani.jpg
+                  isAvailable: true
+        '500':
+          description: Server error
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - description: Standard error payload.
+                  examples:
+                  - success: false
+                    error: Unexpected error
+                contentMediaType: application/json
+              example:
+                success: false
+                error: Unexpected error
+      deprecated: false
+    parameters: []
+  /order/place-order:
+    post:
+      tags:
+      - Order
+      summary: placeOrder
+      description: Creates an order for the specified items and table.
+      operationId: placeOrder
+      parameters: []
+      requestBody:
+        description: Order payload including items, table number, and customer details.
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/OrderInput'
+              - description: Order payload including items, table number, and customer details.
+                examples:
+                - items:
+                  - menuItem: 66cfe9b1f23a4a0012ab0001
+                    quantity: 2
+                  - menuItem: 66cfe9b1f23a4a0012ab0002
+                    quantity: 1
+                  tableNumber: 7
+                  totalAmount: 3297
+                  orderType: dine-in
+                  customerDetails:
+                    contact: +92-300-1234567
+                    address: Table 7 - Hall A
+              contentMediaType: application/json
+            example:
+              items:
+              - menuItem: 66cfe9b1f23a4a0012ab0001
+                quantity: 2
+              - menuItem: 66cfe9b1f23a4a0012ab0002
+                quantity: 1
+              tableNumber: 7
+              totalAmount: 3297
+              orderType: dine-in
+              customerDetails:
+                contact: +92-300-1234567
+                address: Table 7 - Hall A
+        required: true
+      responses:
+        '201':
+          description: Order placed successfully
+          headers:
+            Location:
+              description: URL of the created order resource
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                    description: URL of the created order resource
+                    examples:
+                    - https://restaurant-api-i70b.onrender.com/api/order/66cff0aa3a2d4a0012cdbeef
+                    contentMediaType: text/plain
+                  example: https://restaurant-api-i70b.onrender.com/api/order/66cff0aa3a2d4a0012cdbeef
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/OrderResponse'
+                - description: Response containing a single order.
+                  examples:
+                  - success: true
+                    data:
+                      _id: 66cff0aa3a2d4a0012cdbeef
+                      items:
+                      - menuItem: 66cfe9b1f23a4a0012ab0001
+                        quantity: 2
+                      - menuItem: 66cfe9b1f23a4a0012ab0002
+                        quantity: 1
+                      tableNumber: 7
+                      totalAmount: 3297
+                      orderType: dine-in
+                      customerDetails:
+                        contact: +92-300-1234567
+                        address: Table 7 - Hall A
+                      status: pending
+                      createdAt: 2025-08-25T10:00:00Z
+                contentMediaType: application/json
+              example:
+                success: true
+                data:
+                  _id: 66cff0aa3a2d4a0012cdbeef
+                  items:
+                  - menuItem: 66cfe9b1f23a4a0012ab0001
+                    quantity: 2
+                  - menuItem: 66cfe9b1f23a4a0012ab0002
+                    quantity: 1
+                  tableNumber: 7
+                  totalAmount: 3297
+                  orderType: dine-in
+                  customerDetails:
+                    contact: +92-300-1234567
+                    address: Table 7 - Hall A
+                  status: pending
+                  createdAt: 2025-08-25T10:00:00Z
+        '400':
+          description: Invalid request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - description: Standard error payload.
+                  examples:
+                  - success: false
+                    error: items must not be empty
+                contentMediaType: application/json
+              example:
+                success: false
+                error: items must not be empty
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - description: Standard error payload.
+                  examples:
+                  - success: false
+                    error: Missing or invalid token
+                contentMediaType: application/json
+              example:
+                success: false
+                error: Missing or invalid token
+        '500':
+          description: Server error
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - description: Standard error payload.
+                  examples:
+                  - success: false
+                    error: Unexpected error
+                contentMediaType: application/json
+              example:
+                success: false
+                error: Unexpected error
+      deprecated: false
+      security:
+      - bearerAuth: []
+    parameters: []
+  /order/history:
+    get:
+      tags:
+      - Order
+      summary: getOrderHistory
+      description: Returns the authenticated user's recent orders.
+      operationId: getOrderHistory
+      parameters: []
+      responses:
+        '200':
+          description: List of previous orders
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/OrderHistoryResponse'
+                - description: Response containing a list of orders.
+                  examples:
+                  - success: true
+                    count: 1
+                    data:
+                    - _id: 66cff0aa3a2d4a0012cdbeef
+                      items:
+                      - menuItem: 66cfe9b1f23a4a0012ab0001
+                        quantity: 2
+                      tableNumber: 7
+                      totalAmount: 2398
+                      orderType: dine-in
+                      customerDetails:
+                        contact: +92-300-1234567
+                        address: Table 7 - Hall A
+                      status: served
+                      createdAt: 2025-08-20T14:35:00Z
+                contentMediaType: application/json
+              example:
+                success: true
+                count: 1
+                data:
+                - _id: 66cff0aa3a2d4a0012cdbeef
+                  items:
+                  - menuItem: 66cfe9b1f23a4a0012ab0001
+                    quantity: 2
+                  tableNumber: 7
+                  totalAmount: 2398
+                  orderType: dine-in
+                  customerDetails:
+                    contact: +92-300-1234567
+                    address: Table 7 - Hall A
+                  status: served
+                  createdAt: 2025-08-20T14:35:00Z
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - description: Standard error payload.
+                  examples:
+                  - success: false
+                    error: Missing or invalid token
+                contentMediaType: application/json
+              example:
+                success: false
+                error: Missing or invalid token
+        '500':
+          description: Server error
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ErrorResponse'
+                - description: Standard error payload.
+                  examples:
+                  - success: false
+                    error: Unexpected error
+                contentMediaType: application/json
+              example:
+                success: false
+                error: Unexpected error
+      deprecated: false
+      security:
+      - bearerAuth: []
+    parameters: []
+components:
+  schemas:
+    MenuItem:
+      title: MenuItem
+      required:
+      - _id
+      - name
+      - price
+      - isAvailable
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the menu item
+          examples:
+          - 66cfe9b1f23a4a0012ab0001
+        name:
+          type: string
+          description: Display name of the item
+          examples:
+          - Margherita Pizza
+        description:
+          type: string
+          description: Short description of the item
+          examples:
+          - Classic pizza with tomato sauce, mozzarella, and basil
+        price:
+          type: number
+          description: Price in minor currency or standard units, depending on system
+          examples:
+          - 1199
+        category:
+          type: string
+          description: Category or section
+          examples:
+          - Pizza
+        image:
+          type: string
+          description: Image URL
+          examples:
+          - https://cdn.example.com/img/margherita.jpg
+        isAvailable:
+          type: boolean
+          description: Whether the item is currently available
+          examples:
+          - true
+      description: A single menu item available for ordering.
+    MenuResponse:
+      title: MenuResponse
+      required:
+      - success
+      - data
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          examples:
+          - true
+        count:
+          type: integer
+          description: Number of items returned
+          contentEncoding: int32
+          examples:
+          - 2
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuItem'
+          description: Menu items
+      description: Response containing a list of menu items.
+    OrderItem:
+      title: OrderItem
+      required:
+      - menuItem
+      - quantity
+      type: object
+      properties:
+        menuItem:
+          type: string
+          description: Menu item ID
+          examples:
+          - 66cfe9b1f23a4a0012ab0001
+        quantity:
+          minimum: 1
+          type: integer
+          description: Quantity ordered
+          contentEncoding: int32
+          examples:
+          - 2
+      description: An individual line item within an order.
+    CustomerDetails:
+      title: CustomerDetails
+      required:
+      - contact
+      - address
+      type: object
+      properties:
+        contact:
+          type: string
+          description: Customer contact number or identifier
+          examples:
+          - +92-300-1234567
+        address:
+          type: string
+          description: Delivery address or table location note
+          examples:
+          - Table 7 - Hall A
+      description: Minimal customer contact and delivery info.
+    OrderType:
+      title: OrderType
+      enum:
+      - dine-in
+      - takeaway
+      - delivery
+      type: string
+      description: How the order will be fulfilled.
+      examples:
+      - dine-in
+    OrderInput:
+      title: OrderInput
+      required:
+      - items
+      - tableNumber
+      - totalAmount
+      - orderType
+      - customerDetails
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          description: List of items being ordered
+        tableNumber:
+          minimum: 1
+          type: integer
+          description: Table number for dine-in orders
+          contentEncoding: int32
+          examples:
+          - 7
+        totalAmount:
+          minimum: 0
+          type: number
+          description: Total amount for the order
+          examples:
+          - 3297
+        orderType:
+          allOf:
+          - $ref: '#/components/schemas/OrderType'
+          - description: How the order will be fulfilled.
+            examples:
+            - dine-in
+        customerDetails:
+          allOf:
+          - $ref: '#/components/schemas/CustomerDetails'
+          - description: Minimal customer contact and delivery info.
+      description: Payload used to create a new order.
+    Order:
+      title: Order
+      required:
+      - _id
+      - items
+      - totalAmount
+      - orderType
+      - status
+      - createdAt
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Order ID
+          examples:
+          - 66cff0aa3a2d4a0012cdbeef
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          description: List of ordered items
+        tableNumber:
+          type: integer
+          description: Table number for dine-in
+          contentEncoding: int32
+          examples:
+          - 7
+        totalAmount:
+          type: number
+          description: Total amount charged
+          examples:
+          - 3297
+        orderType:
+          allOf:
+          - $ref: '#/components/schemas/OrderType'
+          - description: How the order will be fulfilled.
+            examples:
+            - dine-in
+        customerDetails:
+          allOf:
+          - $ref: '#/components/schemas/CustomerDetails'
+          - description: Minimal customer contact and delivery info.
+        status:
+          type: string
+          description: Current order status
+          examples:
+          - pending
+        createdAt:
+          type: string
+          description: Creation timestamp (ISO 8601)
+          contentEncoding: date-time
+          examples:
+          - 2025-08-25T10:00:00Z
+      description: An order placed by a customer.
+    OrderResponse:
+      title: OrderResponse
+      required:
+      - success
+      - data
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          examples:
+          - true
+        data:
+          allOf:
+          - $ref: '#/components/schemas/Order'
+          - description: An order placed by a customer.
+      description: Response containing a single order.
+    OrderHistoryResponse:
+      title: OrderHistoryResponse
+      required:
+      - success
+      - data
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          examples:
+          - true
+        count:
+          type: integer
+          description: Number of orders returned
+          contentEncoding: int32
+          examples:
+          - 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+          description: Orders
+      description: Response containing a list of orders.
+    ErrorResponse:
+      title: ErrorResponse
+      required:
+      - success
+      - error
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Always false for errors
+          examples:
+          - false
+        error:
+          type: string
+          description: Human-readable error message
+          examples:
+          - Invalid token
+      description: Standard error payload.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: Supply a valid JWT in the Authorization header using the Bearer scheme.
+      scheme: bearer
+      bearerFormat: jwt
+security: []
+tags:
+- name: Menu
+  description: Endpoints for browsing menu items
+- name: Order
+  description: Endpoints for creating and viewing orders

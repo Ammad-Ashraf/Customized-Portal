@@ -1,0 +1,655 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.1",
+    "title": "QR-Based Restaurant Management System API",
+    "description": "API for browsing menu items and placing orders in a QR-based restaurant system.",
+    "contact": {
+      "email": "support@example.com",
+      "name": "API Support",
+      "url": "https://restaurant-api.example.com/support"
+    }
+  },
+  "host": "restaurant-api-i70b.onrender.com",
+  "basePath": "/api",
+  "securityDefinitions": {},
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/menu": {
+      "get": {
+        "description": "Returns the full list of menu items currently available for ordering.",
+        "summary": "listMenuItems",
+        "tags": [
+          "Menu"
+        ],
+        "operationId": "listMenuItems",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "default": "Bearer {token}",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of menu items",
+            "schema": {
+              "$ref": "#/definitions/MenuResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "count": 2,
+                "data": [
+                  {
+                    "_id": "66cfe9b1f23a4a0012ab0001",
+                    "name": "Margherita Pizza",
+                    "description": "Classic pizza with tomato sauce, mozzarella, and basil",
+                    "price": 1199.0,
+                    "category": "Pizza",
+                    "image": "https://cdn.example.com/img/margherita.jpg",
+                    "isAvailable": true
+                  },
+                  {
+                    "_id": "66cfe9b1f23a4a0012ab0002",
+                    "name": "Chicken Biryani",
+                    "description": "Spiced rice with marinated chicken",
+                    "price": 899.0,
+                    "category": "Main",
+                    "image": "https://cdn.example.com/img/biryani.jpg",
+                    "isAvailable": true
+                  }
+                ]
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "error": "Unexpected error"
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/order/place-order": {
+      "post": {
+        "description": "Creates an order for the specified items and table.",
+        "summary": "placeOrder",
+        "tags": [
+          "Order"
+        ],
+        "operationId": "placeOrder",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": false,
+            "enum": [
+              "application/json"
+            ],
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "Order payload including items, table number, and customer details.",
+            "schema": {
+              "$ref": "#/definitions/OrderInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order placed successfully",
+            "schema": {
+              "$ref": "#/definitions/OrderResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "data": {
+                  "_id": "66cff0aa3a2d4a0012cdbeef",
+                  "items": [
+                    {
+                      "menuItem": "66cfe9b1f23a4a0012ab0001",
+                      "quantity": 2
+                    },
+                    {
+                      "menuItem": "66cfe9b1f23a4a0012ab0002",
+                      "quantity": 1
+                    }
+                  ],
+                  "tableNumber": 7,
+                  "totalAmount": 3297.0,
+                  "orderType": "dine-in",
+                  "customerDetails": {
+                    "contact": "+92-300-1234567",
+                    "address": "Table 7 - Hall A"
+                  },
+                  "status": "pending",
+                  "createdAt": "2025-08-25T10:00:00Z"
+                }
+              }
+            },
+            "headers": {
+              "Location": {
+                "description": "URL of the created order resource",
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "error": "items must not be empty"
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "error": "Missing or invalid token"
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "error": "Unexpected error"
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/order/history": {
+      "get": {
+        "description": "Returns the authenticated user's recent orders.",
+        "summary": "getOrderHistory",
+        "tags": [
+          "Order"
+        ],
+        "operationId": "getOrderHistory",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of previous orders",
+            "schema": {
+              "$ref": "#/definitions/OrderHistoryResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": true,
+                "count": 1,
+                "data": [
+                  {
+                    "_id": "66cff0aa3a2d4a0012cdbeef",
+                    "items": [
+                      {
+                        "menuItem": "66cfe9b1f23a4a0012ab0001",
+                        "quantity": 2
+                      }
+                    ],
+                    "tableNumber": 7,
+                    "totalAmount": 2398.0,
+                    "orderType": "dine-in",
+                    "customerDetails": {
+                      "contact": "+92-300-1234567",
+                      "address": "Table 7 - Hall A"
+                    },
+                    "status": "served",
+                    "createdAt": "2025-08-20T14:35:00Z"
+                  }
+                ]
+              }
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "error": "Missing or invalid token"
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "Server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "error": "Unexpected error"
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "definitions": {
+    "MenuItem": {
+      "title": "MenuItem",
+      "description": "A single menu item available for ordering.",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "description": "Unique identifier of the menu item",
+          "example": "66cfe9b1f23a4a0012ab0001",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name of the item",
+          "example": "Margherita Pizza",
+          "type": "string"
+        },
+        "description": {
+          "description": "Short description of the item",
+          "example": "Classic pizza with tomato sauce, mozzarella, and basil",
+          "type": "string"
+        },
+        "price": {
+          "description": "Price in minor currency or standard units, depending on system",
+          "example": 1199,
+          "type": "number",
+          "format": "double"
+        },
+        "category": {
+          "description": "Category or section",
+          "example": "Pizza",
+          "type": "string"
+        },
+        "image": {
+          "description": "Image URL",
+          "example": "https://cdn.example.com/img/margherita.jpg",
+          "type": "string"
+        },
+        "isAvailable": {
+          "description": "Whether the item is currently available",
+          "example": true,
+          "type": "boolean",
+          "default": "true"
+        }
+      },
+      "required": [
+        "_id",
+        "name",
+        "price",
+        "isAvailable"
+      ]
+    },
+    "MenuResponse": {
+      "title": "MenuResponse",
+      "description": "Response containing a list of menu items.",
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "Indicates if the request was successful",
+          "example": true,
+          "type": "boolean",
+          "default": "true"
+        },
+        "count": {
+          "description": "Number of items returned",
+          "example": 2,
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "description": "Menu items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MenuItem"
+          }
+        }
+      },
+      "required": [
+        "success",
+        "data"
+      ]
+    },
+    "OrderItem": {
+      "title": "OrderItem",
+      "description": "An individual line item within an order.",
+      "type": "object",
+      "properties": {
+        "menuItem": {
+          "description": "Menu item ID",
+          "example": "66cfe9b1f23a4a0012ab0001",
+          "type": "string"
+        },
+        "quantity": {
+          "description": "Quantity ordered",
+          "example": 2,
+          "type": "integer",
+          "default": "1",
+          "minimum": 1.0,
+          "format": "int32"
+        }
+      },
+      "required": [
+        "menuItem",
+        "quantity"
+      ]
+    },
+    "CustomerDetails": {
+      "title": "CustomerDetails",
+      "description": "Minimal customer contact and delivery info.",
+      "type": "object",
+      "properties": {
+        "contact": {
+          "description": "Customer contact number or identifier",
+          "example": "+92-300-1234567",
+          "type": "string"
+        },
+        "address": {
+          "description": "Delivery address or table location note",
+          "example": "Table 7 - Hall A",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact",
+        "address"
+      ]
+    },
+    "OrderType": {
+      "title": "OrderType",
+      "description": "How the order will be fulfilled.",
+      "example": "dine-in",
+      "type": "string",
+      "enum": [
+        "dine-in",
+        "takeaway",
+        "delivery"
+      ]
+    },
+    "OrderInput": {
+      "title": "OrderInput",
+      "description": "Payload used to create a new order.",
+      "type": "object",
+      "properties": {
+        "items": {
+          "description": "List of items being ordered",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem"
+          }
+        },
+        "tableNumber": {
+          "description": "Table number for dine-in orders",
+          "example": 7,
+          "type": "integer",
+          "minimum": 1.0,
+          "format": "int32"
+        },
+        "totalAmount": {
+          "description": "Total amount for the order",
+          "example": 3297,
+          "type": "number",
+          "minimum": 0.0,
+          "format": "double"
+        },
+        "orderType": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/OrderType"
+            },
+            {
+              "description": "How the order will be fulfilled.",
+              "example": "dine-in"
+            }
+          ]
+        },
+        "customerDetails": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/CustomerDetails"
+            },
+            {
+              "description": "Minimal customer contact and delivery info."
+            }
+          ]
+        }
+      },
+      "required": [
+        "items",
+        "tableNumber",
+        "totalAmount",
+        "orderType",
+        "customerDetails"
+      ]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "An order placed by a customer.",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "description": "Order ID",
+          "example": "66cff0aa3a2d4a0012cdbeef",
+          "type": "string"
+        },
+        "items": {
+          "description": "List of ordered items",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OrderItem"
+          }
+        },
+        "tableNumber": {
+          "description": "Table number for dine-in",
+          "example": 7,
+          "type": "integer",
+          "format": "int32"
+        },
+        "totalAmount": {
+          "description": "Total amount charged",
+          "example": 3297,
+          "type": "number",
+          "format": "double"
+        },
+        "orderType": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/OrderType"
+            },
+            {
+              "description": "How the order will be fulfilled.",
+              "example": "dine-in"
+            }
+          ]
+        },
+        "customerDetails": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/CustomerDetails"
+            },
+            {
+              "description": "Minimal customer contact and delivery info."
+            }
+          ]
+        },
+        "status": {
+          "description": "Current order status",
+          "example": "pending",
+          "type": "string",
+          "default": "pending"
+        },
+        "createdAt": {
+          "description": "Creation timestamp (ISO 8601)",
+          "example": "2025-08-25T10:00:00Z",
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "_id",
+        "items",
+        "totalAmount",
+        "orderType",
+        "status",
+        "createdAt"
+      ]
+    },
+    "OrderResponse": {
+      "title": "OrderResponse",
+      "description": "Response containing a single order.",
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "Indicates if the request was successful",
+          "example": true,
+          "type": "boolean",
+          "default": "true"
+        },
+        "data": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Order"
+            },
+            {
+              "description": "An order placed by a customer."
+            }
+          ]
+        }
+      },
+      "required": [
+        "success",
+        "data"
+      ]
+    },
+    "OrderHistoryResponse": {
+      "title": "OrderHistoryResponse",
+      "description": "Response containing a list of orders.",
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "Indicates if the request was successful",
+          "example": true,
+          "type": "boolean",
+          "default": "true"
+        },
+        "count": {
+          "description": "Number of orders returned",
+          "example": 1,
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "description": "Orders",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Order"
+          }
+        }
+      },
+      "required": [
+        "success",
+        "data"
+      ]
+    },
+    "ErrorResponse": {
+      "title": "ErrorResponse",
+      "description": "Standard error payload.",
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "Always false for errors",
+          "example": false,
+          "type": "boolean",
+          "default": "false"
+        },
+        "error": {
+          "description": "Human-readable error message",
+          "example": "Invalid token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "success",
+        "error"
+      ]
+    }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "Menu",
+      "description": "Endpoints for browsing menu items"
+    },
+    {
+      "name": "Order",
+      "description": "Endpoints for creating and viewing orders"
+    }
+  ]
+}

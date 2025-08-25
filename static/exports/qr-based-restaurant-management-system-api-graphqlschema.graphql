@@ -1,0 +1,167 @@
+# API Name: "QR-Based Restaurant Management System API"
+# Host: https://restaurant-api-i70b.onrender.com/api
+# API for browsing menu items and placing orders in a QR-based restaurant system.
+
+"How the order will be fulfilled."
+enum OrderType {
+    DELIVERY
+    DINEIN
+    TAKEAWAY
+}
+
+"A single menu item available for ordering."
+type MenuItem {
+    "Unique identifier of the menu item"
+    id: String!
+    "Display name of the item"
+    name: String!
+    "Short description of the item"
+    description: String!
+    "Price in minor currency or standard units, depending on system"
+    price: Float!
+    "Category or section"
+    category: String!
+    "Image URL"
+    image: String!
+    "Whether the item is currently available"
+    isAvailable: Boolean!
+}
+
+"Response containing a list of menu items."
+type MenuResponse {
+    "Indicates if the request was successful"
+    success: Boolean!
+    "Number of items returned"
+    count: Int!
+    "Menu items"
+    data: [MenuItem!]
+}
+
+"An individual line item within an order."
+type OrderItem {
+    "Menu item ID"
+    menuItem: String!
+    "Quantity ordered"
+    quantity: Int!
+}
+
+"Minimal customer contact and delivery info."
+type CustomerDetails {
+    "Customer contact number or identifier"
+    contact: String!
+    "Delivery address or table location note"
+    address: String!
+}
+
+"Payload used to create a new order."
+type OrderInput {
+    "List of items being ordered"
+    items: [OrderItem!]
+    "Table number for dine-in orders"
+    tableNumber: Int!
+    "Total amount for the order"
+    totalAmount: Float!
+    "How the order will be fulfilled."
+    orderType: OrderType!
+    "Minimal customer contact and delivery info."
+    customerDetails: CustomerDetails!
+}
+
+"An order placed by a customer."
+type Order {
+    "Order ID"
+    id: String!
+    "List of ordered items"
+    items: [OrderItem!]
+    "Table number for dine-in"
+    tableNumber: Int!
+    "Total amount charged"
+    totalAmount: Float!
+    "How the order will be fulfilled."
+    orderType: OrderType!
+    "Minimal customer contact and delivery info."
+    customerDetails: CustomerDetails!
+    "Current order status"
+    status: String!
+    "Creation timestamp (ISO 8601)"
+    createdAt: String!
+}
+
+"Response containing a single order."
+type OrderResponse {
+    "Indicates if the request was successful"
+    success: Boolean!
+    "An order placed by a customer."
+    data: Order!
+}
+
+"Response containing a list of orders."
+type OrderHistoryResponse {
+    "Indicates if the request was successful"
+    success: Boolean!
+    "Number of orders returned"
+    count: Int!
+    "Orders"
+    data: [Order!]
+}
+
+"Standard error payload."
+type ErrorResponse {
+    "Always false for errors"
+    success: Boolean!
+    "Human-readable error message"
+    error: String!
+}
+
+"An individual line item within an order."
+input OrderItemInput {
+    "Menu item ID"
+    menuItem: String!
+    "Quantity ordered"
+    quantity: Int!
+}
+
+"Minimal customer contact and delivery info."
+input CustomerDetailsInput {
+    "Customer contact number or identifier"
+    contact: String!
+    "Delivery address or table location note"
+    address: String!
+}
+
+"Payload used to create a new order."
+input OrderInput1 {
+    "List of items being ordered"
+    items: [OrderItemInput!]
+    "Table number for dine-in orders"
+    tableNumber: Int!
+    "Total amount for the order"
+    totalAmount: Float!
+    "How the order will be fulfilled."
+    orderType: OrderType!
+    "Minimal customer contact and delivery info."
+    customerDetails: CustomerDetailsInput!
+}
+
+input CreatePlaceorderInput {
+    contentType: String!
+    "Order payload including items, table number, and customer details."
+    body: OrderInput1!
+}
+
+type Query {
+    "Returns the full list of menu items currently available for ordering."
+    listMenuItems: MenuResponse!
+    "Returns the authenticated user's recent orders."
+    getOrderHistory: OrderHistoryResponse!
+}
+
+type Mutation {
+    "Creates an order for the specified items and table."
+    createPlaceorder(input: CreatePlaceorderInput!): OrderResponse!
+}
+
+schema {
+    mutation: Mutation
+    query: Query
+}

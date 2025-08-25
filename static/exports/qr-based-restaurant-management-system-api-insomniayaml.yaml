@@ -1,0 +1,48 @@
+_type: export
+__export_format: 4
+__export_source: apimatic.transformer
+resources:
+- name: QR-Based Restaurant Management System API
+  _type: workspace
+  _id: wrk_430b4ccf6af741a29e3d3a1ee8435b2f
+  description: API for browsing menu items and placing orders in a QR-based restaurant system.
+- name: Menu
+  _type: request_group
+  _id: fld_092e14567383479e8eacb5d09be9d237
+  parentId: wrk_430b4ccf6af741a29e3d3a1ee8435b2f
+  description: Endpoints for browsing menu items
+- name: Order
+  _type: request_group
+  _id: fld_a915f2b6dbbf4e15afa79a6c33020a9c
+  parentId: wrk_430b4ccf6af741a29e3d3a1ee8435b2f
+  description: Endpoints for creating and viewing orders
+- name: listMenuItems
+  method: GET
+  url: https://restaurant-api-i70b.onrender.com/api/menu
+  _type: request
+  _id: req_54a0935b74aa4e4c836f300297a30d70
+  parentId: fld_092e14567383479e8eacb5d09be9d237
+  description: Returns the full list of menu items currently available for ordering.
+- name: placeOrder
+  method: POST
+  url: https://restaurant-api-i70b.onrender.com/api/order/place-order
+  body:
+    mimeType: application/json
+    text: '{"items":[{"menuItem":"66cfe9b1f23a4a0012ab0001","quantity":2},{"menuItem":"66cfe9b1f23a4a0012ab0002","quantity":1}],"tableNumber":7,"totalAmount":3297.0,"orderType":"dine-in","customerDetails":{"contact":"+92-300-1234567","address":"Table 7 - Hall A"}}'
+  headers:
+  - name: Content-Type
+    value: application/json
+    disabled: false
+  authentication: {}
+  _type: request
+  _id: req_3a3a96db92424b849b022e7fd5dd404a
+  parentId: fld_a915f2b6dbbf4e15afa79a6c33020a9c
+  description: Creates an order for the specified items and table.
+- name: getOrderHistory
+  method: GET
+  url: https://restaurant-api-i70b.onrender.com/api/order/history
+  authentication: {}
+  _type: request
+  _id: req_041ed06db10a4fe08a4736a172e1c5ec
+  parentId: fld_a915f2b6dbbf4e15afa79a6c33020a9c
+  description: Returns the authenticated user's recent orders.
